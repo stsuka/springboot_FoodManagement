@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>食べ物管理</title>
+</head>
+<body>
+
+	<h1>食べ物管理</h1>
+	本日は<span th:text="${today}"></span>です。
+
+	<br>
+	<br>
+	
+	<table border="1">
+		<tr>
+			<th>食べ物</th><th>在庫数</th><th>賞味期限</th><th>評価</th><th>在庫管理</th><th>削除</th>
+		</tr>
+		<tr th:each="food:${foodList}">
+			<td th:text="${food.name}"></td>
+			<td th:text="${food.count}"></td>
+			<td th:text="${#dates.format(food.bestbefore, 'yyyy年MM月dd日')}"></td>
+			<td th:if="${judge[food.code-1] == null}"> th:text="${judge[food.code-1]}"</td>
+			<td>
+				<form action="/update" method="post">
+					<input type="submit" value="更新">
+					<input type="hidden" name="code" th:value="${food.code}">
+				</form>
+			</td>
+			<td>
+				<form action="/delete" method="post">
+					<input type="submit" value="削除">
+					<input type="hidden" name="code" th:value="${food.code}">
+				</form>
+			</td>
+		</tr>
+	
+	</table>
+	
+	<br>
+	
+	<a href="/add">新規登録</a>　｜　<a href="/history">登録履歴</a>
+
+</body>
+</html>
