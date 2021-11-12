@@ -6,14 +6,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -25,29 +24,32 @@ public class FoodController {
 	@Autowired
 	FoodRepository foodRepository;
 	
+	@Autowired
+	FoodHistoryRepository foodHistoryRepository;
+	
 	//初期表示
 	@RequestMapping("/")
 	public ModelAndView index(ModelAndView mv) {
 		
+		//日時関連の変数初期化
 		LocalDate todayLD = LocalDate.now();
 		DateTimeFormatter dtf = 
 				DateTimeFormatter.ofPattern("y'年'MM'月'dd'日'");
 
-		long count = foodRepository.count();
+		//foodテーブル要素全件取得
+		List<Food> foodList = foodRepository.findAll();
 		
+		//判定結果表示
 		List<String> judgeList = new ArrayList<>();
 		
-		for(int i = 0; i < count; i++) {
-			try {
-				Food bestBefore1 = foodRepository.findById(i + 1).get();
-				
-				//削除機能実装時に再確認
-				//しめじを削除した際にbestBefore1が取れなくなる
-				//取れない状態でbestBeforeLDの処理が進むため、エラーとなる
-				//if文での対応も可、Optional型を用いた条件式作成
-				//講師に確認をとってみる
-				
-				LocalDate bestBeforeLD =  LocalDate.ofInstant(bestBefore1.getBestbefore().toInstant(), ZoneId.systemDefault());
+		//foodテーブルの件数で繰り返し処理
+		for(Food extendFoodList : foodList) {
+			
+			//Optional型(繰り返し処理の回数と同数のコード値があるか判定)
+			Optional<Food> bestBeforeOptional = foodRepository.findById(extendFoodList.getCode());
+			if(bestBeforeOptional.isPresent()) {
+				Food bestBefore2 = bestBeforeOptional.get();
+				LocalDate bestBeforeLD =  LocalDate.ofInstant(bestBefore2.getBestbefore().toInstant(), ZoneId.systemDefault());
 				long diffDays = todayLD.until(bestBeforeLD,ChronoUnit.DAYS);
 				
 			    //賞味期限-閲覧日が3日以上
@@ -66,9 +68,6 @@ public class FoodController {
 				} else {
 					judgeList.add("❗❗");	
 				}
-			} catch(Exception e) {
-				judgeList.add(null);
-				continue;
 			}
 		}
 		
@@ -80,18 +79,13 @@ public class FoodController {
 		
 	}
 	
-	//削除機能
-	@RequestMapping(value="/delete", method=RequestMethod.POST)
-	public ModelAndView delete(
-			@RequestParam("code") String code,
-			ModelAndView mv) {
-		
-		foodRepository.deleteById(Integer.parseInt(code));
-		
-		index(mv);
-		
+	//履歴表示
+	@RequestMapping("history")
+	public ModelAndView history(ModelAndView mv) {
+		mv.addObject("foodHistoryList", foodHistoryRepository.findAllByOrderByCodeAsc());
+		mv.setViewName("history");
+
 		return mv;
 	}
 	
-
 }

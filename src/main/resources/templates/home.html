@@ -14,13 +14,13 @@
 	
 	<table border="1">
 		<tr>
-			<th>食べ物</th><th>在庫数</th><th>賞味期限</th><th>評価</th><th>在庫管理</th><th>削除</th>
+			<th>食べ物</th><th>在庫数</th><th>賞味期限</th><th>評価</th><th>在庫管理</th><th>登録情報の編集</th>
 		</tr>
-		<tr th:each="food:${foodList}">
+		<tr th:each="food,foodStat:${foodList}">
 			<td th:text="${food.name}"></td>
 			<td th:text="${food.count}"></td>
 			<td th:text="${#dates.format(food.bestbefore, 'yyyy年MM月dd日')}"></td>
-			<td th:if="${judge[food.code-1] == null}"> th:text="${judge[food.code-1]}"</td>
+			<td th:text="${judge[foodStat.index]}"></td>
 			<td>
 				<form action="/update" method="post">
 					<input type="submit" value="更新">
@@ -28,8 +28,8 @@
 				</form>
 			</td>
 			<td>
-				<form action="/delete" method="post">
-					<input type="submit" value="削除">
+				<form action="/fix" method="post">
+					<input type="submit" value="編集">
 					<input type="hidden" name="code" th:value="${food.code}">
 				</form>
 			</td>

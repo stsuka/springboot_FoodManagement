@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>食材追加</title>
+</head>
+<body>
+
+	<h1>食材を追加します</h1>
+	入力内容について、追加後の変更はできません。<br>
+	下記入力欄を埋めたうえで「追加」ボタンを押してください。
+	
+	<p th:text="${message}" style="color:red"></p>
+	
+	<form action="/add/addResult" method="post">
+		<table border="1">
+			<tr>
+				<th>食べ物名</th>
+				<td><input type="text" name="name"></td>
+			</tr>
+			<tr>
+				<th>カテゴリー</th>
+				<td><input type="text" name="categoryCode"></td>
+			</tr>
+			<tr>
+				<th>個数</th>
+				<td><input type="text" name="count"></td>
+			</tr>
+			<tr>
+				<th>購入日</th>
+				<td><input type="date" name="dateBuy"></td>
+			</tr>
+			<tr>
+				<th>賞味期限</th>
+				<td><input type="date" name="dateBefore"></td>
+			</tr>
+		</table>
+		
+		<br>
+		
+		<input type="submit" value="追加">
+		
+		<br>
+		<br>
+		
+		<a href="/">戻る</a>
+	
+	
+	</form>
+</body>
+</html>

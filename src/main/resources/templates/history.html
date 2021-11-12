@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html　xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>登録履歴</title>
+</head>
+<body>
+
+	<h1>登録履歴</h1>
+	最終更新時の情報です。
+	
+	<br>
+	<br>
+	
+	<table border="1">
+		<tr>
+			<th>食べ物</th><th>在庫数</th><th>賞味期限</th>
+		</tr>
+		<tr th:each="food:${foodHistoryList}">
+			<td th:text="${food.name}"></td>
+			<td th:text="${food.count}"></td>
+			<td th:text="${#dates.format(food.bestbefore, 'yyyy年MM月dd日')}"></td>
+		</tr>
+	</table>
+	
+</body>
+</html>
