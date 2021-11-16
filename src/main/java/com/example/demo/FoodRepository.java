@@ -8,6 +8,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FoodRepository extends JpaRepository<Food, Integer> {
 
-	List<Food> findAllByOrderByCodeAsc();
+	//履歴表示に使用
+	List<Food> findAllByOrderByBuyDateAsc();
+	
+	//カテゴリー別食材一覧表示
+	List<Food> findByCategoryCodeOrderByBuyDateAscStockCountAsc(Integer categoryCode);
+	
+	//全食材一覧表示
+	List<Food> findAllByStockCountGreaterThanOrderByBuyDateAscStockCountAsc(Integer i);
 	
 }

@@ -7,6 +7,14 @@
 <body>
 
 	<h1>食べ物管理</h1>
+	<a href="/">全食材</a>
+	<a th:each="category:${categories}" th:href="'/category/' + ${category.code}">
+		<span th:text="${category.name}" style="padding-left:10px;"></span>
+	</a>
+
+	<br>
+	<br>
+	
 	本日は<span th:text="${today}"></span>です。
 
 	<br>
@@ -14,25 +22,13 @@
 	
 	<table border="1">
 		<tr>
-			<th>食べ物</th><th>在庫数</th><th>賞味期限</th><th>評価</th><th>在庫管理</th><th>登録情報の編集</th>
+			<th>食べ物</th><th>在庫数</th><th>購入日</th><th>評価</th>
 		</tr>
 		<tr th:each="food,foodStat:${foodList}">
-			<td th:text="${food.name}"></td>
-			<td th:text="${food.count}"></td>
-			<td th:text="${#dates.format(food.bestbefore, 'yyyy年MM月dd日')}"></td>
-			<td th:text="${judge[foodStat.index]}"></td>
-			<td>
-				<form action="/update" method="post">
-					<input type="submit" value="更新">
-					<input type="hidden" name="code" th:value="${food.code}">
-				</form>
-			</td>
-			<td>
-				<form action="/fix" method="post">
-					<input type="submit" value="編集">
-					<input type="hidden" name="code" th:value="${food.code}">
-				</form>
-			</td>
+			<td><a th:href="'/update/' + ${food.code}" th:text="${food.name}"></a></td>
+			<td th:text="${food.stockCount}"></td>
+			<td th:text="${#dates.format(food.buyDate, 'yyyy年MM月dd日')}"></td>
+			<td th:text="${food.judgeBestBefore()}"></td>
 		</tr>
 	
 	</table>

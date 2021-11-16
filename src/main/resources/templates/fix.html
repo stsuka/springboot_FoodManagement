@@ -7,25 +7,43 @@
 <body>
 
 	<h1>登録情報の編集</h1>
+	<p th:text="${message}" style="color:red"></p>
 	
-	<form action="finalFix" method="post">
-		<table border="1" th:each="list:${fixFoodList}">
+	<form action="fix/finalFix" method="post">
+		<table border="1">
 			<tr>
 				<th>食べ物</th>
-				<td><input type="text" name="fixName" th:value="${list.name}"></td>
+				<td><input type="text" name="fixName" th:value="${food.name}"></td>
+			</tr>
+			<tr>
+				<th>カテゴリー</th>
+				<td>
+					<select name="fixCategoryCode">
+						<option value="1" th:selected="${food.categoryCode == 1}">1.野菜</option>
+						<option value="2" th:selected="${food.categoryCode == 2}">2.肉・魚</option>
+						<option value="3" th:selected="${food.categoryCode == 3}">3.お菓子</option>
+					</select>
+				</td>
+			</tr>	
+			<tr>
+				<th>購入数</th>
+				<td><input type="text" name="fixBuyCount" th:value="${food.buyCount}"></td>
+			</tr>				
+			<tr>
+				<th>購入日</th>
+				<td><input type="date" name="fixBuyDate" th:field="${food.buyDate}"></td>
 			</tr>		
 			<tr>
-				<th>在庫数</th>
-				<td><input type="text" name="fixCount" th:value="${list.count}"></td>
-			</tr>		
-			<tr>
-				<th>賞味期限（実装要検討）</th>
-				<td><input type="date" name="fixDate"></td>
+				<th>賞味期限</th>
+				<td><input type="date" name="fixBestBefore" th:field="${food.bestBefore}"></td>
 			</tr>		
 		</table>
-		
+
 		<br>
-		<b style="color:red">編集が完了した</b>：<input type="submit" value="編集完了">
+		<b style="color:red">編集が完了した</b>：
+			<input type="submit" value="編集完了">
+			<input type="hidden" name="code" th:value="${food.code}">
+			<input type="hidden" name="stockCount" th:value="${food.stockCount}">
 	</form>
 	
 	<hr>
@@ -33,7 +51,12 @@
 	
 	<form action="/delete">
 		<b style="color:red">入力・登録に誤りがあった場合：</b><input type="submit" value="削除">
+		<input type="hidden" name="code" th:value="${food.code}">
 	</form>
+	
+	<br>
+	
+	<a href="/">トップページに戻る</a>
 
 </body>
 </html>

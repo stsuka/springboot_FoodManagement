@@ -14,14 +14,24 @@
 	
 	<table border="1">
 		<tr>
-			<th>食べ物</th><th>在庫数</th><th>賞味期限</th>
+			<th>食べ物</th><th>購入数</th><th>購入日</th><th>賞味期限</th>
 		</tr>
-		<tr th:each="food:${foodHistoryList}">
+		<tr th:each="food:${foodList}">
 			<td th:text="${food.name}"></td>
-			<td th:text="${food.count}"></td>
-			<td th:text="${#dates.format(food.bestbefore, 'yyyy年MM月dd日')}"></td>
+			<td th:text="${food.buyCount}"></td>
+			<td th:text="${#dates.format(food.buyDate, 'yyyy年MM月dd日')}"></td>
+			<th:block th:if="${food.bestBefore == null}">
+				<td>賞味期限の登録はありません</td>
+			</th:block>
+			<th:block th:if="${food.bestBefore != null}">
+				<td th:text="${#dates.format(food.bestBefore, 'yyyy年MM月dd日')}"></td>
+			</th:block>
 		</tr>
 	</table>
+	
+	<br>
+	
+	<a href="/">戻る</a>
 	
 </body>
 </html>
