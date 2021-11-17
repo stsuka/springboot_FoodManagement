@@ -9,7 +9,7 @@
 	<h1>登録情報の編集</h1>
 	<p th:text="${message}" style="color:red"></p>
 	
-	<form action="fix/finalFix" method="post">
+	<form action="fix/finalFix" method="post" onsubmit="return confirm('変更しますか？')">
 		<table border="1">
 			<tr>
 				<th>食べ物</th>
@@ -28,14 +28,17 @@
 			<tr>
 				<th>購入数</th>
 				<td><input type="text" name="fixBuyCount" th:value="${food.buyCount}"></td>
-			</tr>				
+			</tr>	
+			
+			
+						
 			<tr>
 				<th>購入日</th>
-				<td><input type="date" name="fixBuyDate" th:field="${food.buyDate}"></td>
+				<td><input type="date" th:field="${food.buyDate}"></td>
 			</tr>		
 			<tr>
 				<th>賞味期限</th>
-				<td><input type="date" name="fixBestBefore" th:field="${food.bestBefore}"></td>
+				<td><input type="date" th:field="${food.bestBefore}"></td>
 			</tr>		
 		</table>
 
@@ -43,13 +46,12 @@
 		<b style="color:red">編集が完了した</b>：
 			<input type="submit" value="編集完了">
 			<input type="hidden" name="code" th:value="${food.code}">
-			<input type="hidden" name="stockCount" th:value="${food.stockCount}">
 	</form>
 	
 	<hr>
 	<br>
 	
-	<form action="/delete">
+	<form action="/delete" onsubmit="return confirm('削除しますか？')">
 		<b style="color:red">入力・登録に誤りがあった場合：</b><input type="submit" value="削除">
 		<input type="hidden" name="code" th:value="${food.code}">
 	</form>

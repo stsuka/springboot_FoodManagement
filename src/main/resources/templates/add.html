@@ -23,9 +23,9 @@
 				<th><span style="color:red">*</span>カテゴリー</th>
 				<td>
 					<select name="categoryCode">
-						<option value="1">1.野菜</option>
-						<option value="2">2.肉・魚</option>
-						<option value="3">3.お菓子</option>
+						<option value="1" th:selected="${categoryCode == 1}">1.野菜</option>
+						<option value="2" th:selected="${categoryCode == 2}">2.肉・魚</option>
+						<option value="3" th:selected="${categoryCode == 3}">3.お菓子</option>
 					</select>
 				</td>
 			</tr>
@@ -51,7 +51,6 @@
 		<br>
 		
 		<a href="/">戻る</a>
-	
 	
 	</form>
 </body>

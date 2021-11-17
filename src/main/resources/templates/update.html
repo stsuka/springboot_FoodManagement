@@ -22,7 +22,7 @@
 	<br>
 	
 	<b style="color:red">使用した分減らす</b>
-	<form action="/update/finalUpdate" method="post">
+	<form action="/update/finalUpdate" method="post" onsubmit="return confirm('変更しますか？')">
 		登録していた在庫を<b style="color:red" th:text="${food.stockCount}"></b>個から
 		<select name="stockCount">
 			<option th:each="i:${#numbers.sequence(food.stockCount, 0)}" th:text="${i}" th:value="${i}"></option>

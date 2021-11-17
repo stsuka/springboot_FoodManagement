@@ -54,11 +54,15 @@ public class Food {
 	@Transient
 	private String judgeBuyDate;
 	
+	//本日(閲覧日)を表示
+	@Transient
+	private Date today;
+	
 	public Food() {
 		
 	}
 	
-	//＜新規登録・在庫管理＞賞味期限が入力されていない場合
+	//＜新規登録・在庫管理・編集・削除＞賞味期限が入力されていない場合
 	public Food(Integer code, Integer categoryCode, String name, Integer stockCount, Integer buyCount, Date buyDate) {
 		this(categoryCode, name, stockCount, buyCount, buyDate);
 		this.code = code;
@@ -71,7 +75,7 @@ public class Food {
 		this.buyDate = buyDate;
 	}
 	
-	//＜新規登録・在庫管理＞賞味期限が入力されている場合
+	//＜新規登録・在庫管理・編集・削除＞賞味期限が入力されている場合
 	public Food(Integer code, Integer categoryCode, String name, Integer stockCount, Integer buyCount, Date buyDate, Date bestBefore) {
 		this(categoryCode, name, stockCount, buyCount, buyDate, bestBefore);
 		this.code = code;
@@ -84,13 +88,18 @@ public class Food {
 		this.buyDate = buyDate;
 		this.bestBefore = bestBefore;
 	}
+	
+	//本日(閲覧日)を表示
+	public Date today() {
+		Date today = new Date();
+		return today;
+	}
 
 	//賞味期限が入力されているときの評価（賞味期限‐閲覧日の結果)
 	public String judgeBestBefore() {
 	    try {
-	    	Date today = new Date();
 		    // ミリ秒差
-		    long diff = bestBefore.getTime() - today.getTime();
+		    long diff = bestBefore.getTime() - today().getTime();
 		    // 日数に変換
 		    TimeUnit time = TimeUnit.DAYS;
 		    long diffDate = time.convert(diff, TimeUnit.MILLISECONDS);
@@ -193,6 +202,12 @@ public class Food {
 	}
 	public void setJudgeBuyDate(String judgeBuyDate) {
 		this.judgeBuyDate = judgeBuyDate;
+	}
+	public Date getToday() {
+		return today;
+	}
+	public void setToday(Date today) {
+		this.today = today;
 	}
 	
 }

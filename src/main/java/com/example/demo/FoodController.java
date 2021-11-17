@@ -2,11 +2,7 @@ package com.example.demo;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,9 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class FoodController {
-
-	@Autowired
-	HttpSession session;
 	
 	@Autowired
 	FoodRepository foodRepository;
@@ -32,14 +25,12 @@ public class FoodController {
 	@RequestMapping("/")
 	public ModelAndView index(ModelAndView mv) {
 		
-		//日時関連の変数初期化　→Food.javaに移転
-		LocalDate todayLD = LocalDate.now();
-		DateTimeFormatter dtf = 
-				DateTimeFormatter.ofPattern("y'年'MM'月'dd'日'");
+		Food food = new Food();
 		
-		mv.addObject("today", todayLD.format(dtf));
+		mv.addObject("today", food.today());
 		mv.addObject("categories", foodCategoryRepository.findAll());
-		mv.addObject("foodList", foodRepository.findAllByStockCountGreaterThanOrderByBuyDateAscStockCountAsc(0));
+		mv.addObject("foodList",
+				foodRepository.findAllByStockCountGreaterThanOrderByBuyDateAscStockCountAsc(0));
 		mv.setViewName("home");
 		return mv;
 		
@@ -51,13 +42,11 @@ public class FoodController {
 			@PathVariable(name="code") int categoryCode,
 			ModelAndView mv) {
 		
-		//日時関連の変数初期化 →Food.javaに移転
-		LocalDate todayLD = LocalDate.now();
-		DateTimeFormatter dtf = 
-				DateTimeFormatter.ofPattern("y'年'MM'月'dd'日'");
+		Food food = new Food();
 		
-		mv.addObject("today", todayLD.format(dtf));
-		mv.addObject("foodList", foodRepository.findByCategoryCodeOrderByBuyDateAscStockCountAsc(categoryCode));
+		mv.addObject("today", food.today());
+		mv.addObject("foodList",
+				foodRepository.findByCategoryCodeIsAndStockCountGreaterThanOrderByBuyDateAscStockCountAsc(categoryCode, 0));
 		mv.addObject("categories", foodCategoryRepository.findAll());
 		mv.setViewName("home");
 		return mv;
@@ -73,46 +62,36 @@ public class FoodController {
 	@RequestMapping("/add/addResult")
 	public ModelAndView addResult(
 			@RequestParam(name="name", defaultValue="") String name,
-			@RequestParam(name="categoryCode", defaultValue="") String categoryCode,
+			@RequestParam(name="categoryCode") String categoryCode,
 			@RequestParam(name="buyCount", defaultValue="") String buyCount,
 			@RequestParam(name="buyDate", defaultValue="") String buyDateString,
 			@RequestParam(name="bestBefore", defaultValue="") String bestBeforeString,
 			ModelAndView mv) {
 		
-		Date buyDate = null;
-		Date bestBefore = null;
 		Food food = null;
 		String stockCount = buyCount;
 		
-		//String→Date型変換
-		if(!(buyDateString.equals(""))) {
-			buyDate = Date.valueOf(buyDateString);
-		} 
-		
-		if(!(bestBeforeString.equals(""))) {
-			bestBefore = Date.valueOf(bestBeforeString);
-		} 
-		
 		//入力チェック(食べ物名・個数・購入日)
-		if(name.equals("") || stockCount.equals("") || buyDate == null) {
+		if(name.equals("") || buyCount.equals("") || buyDateString.equals("")) {
 			mv.addObject("message", "入力されていない項目があります。");
 			mv.addObject("name", name);
+			mv.addObject("categoryCode", Integer.parseInt(categoryCode));
 			mv.addObject("buyCount", buyCount);
 			mv.setViewName("add");
 		
 		} else {
 			try {
-				//賞味期限が登録された場合
-				if(bestBefore == null) {
+				//賞味期限が登録されなかった場合
+				if(buyDateString.equals("")) {
 					food = new Food
 							(Integer.parseInt(categoryCode), name, Integer.parseInt(stockCount),
-									Integer.parseInt(buyCount), buyDate);
+									Integer.parseInt(buyCount), Date.valueOf(buyDateString));
 				
-				//賞味期限が登録されなかった場合
+				//賞味期限が登録された場合
 				} else {
 					food = new Food
 							(Integer.parseInt(categoryCode), name, Integer.parseInt(stockCount),
-									Integer.parseInt(buyCount), buyDate, bestBefore);
+									Integer.parseInt(buyCount), Date.valueOf(buyDateString), Date.valueOf(bestBeforeString));
 				}
 				
 				foodRepository.saveAndFlush(food);	
@@ -121,10 +100,11 @@ public class FoodController {
 			//「個数」欄に数字以外が入力された場合
 			} catch(NumberFormatException e) {
 				mv.addObject("message", "「個数」には数字を入力してください。");
+				mv.addObject("name", name);
+				mv.addObject("categoryCode", Integer.parseInt(categoryCode));
 				mv.setViewName("add");
 			}
-		}
-		
+		}		
 		return mv;
 	}
 	
@@ -135,7 +115,6 @@ public class FoodController {
 		ModelAndView mv) {
 		
 		Optional<Food> updateFoodList = foodRepository.findById(Integer.parseInt(code));
-	
 		mv.addObject("food", updateFoodList.get());
 		mv.setViewName("update");
 		return mv;
@@ -158,14 +137,18 @@ public class FoodController {
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			
+			//賞味期限が登録されている場合
 			if(bestBefore.equals("")) {
 				food = new Food
 						(Integer.parseInt(code), Integer.parseInt(categoryCode),
 							name,Integer.parseInt(stockCount), Integer.parseInt(buyCount), format.parse(buyDate));
+			
+			//賞味期限が登録されていない場合
 			} else {
 				food = new Food
 						(Integer.parseInt(code), Integer.parseInt(categoryCode), name,
-							Integer.parseInt(stockCount), Integer.parseInt(buyCount), format.parse(buyDate), format.parse(bestBefore));
+							Integer.parseInt(stockCount), Integer.parseInt(buyCount),
+							format.parse(buyDate), format.parse(bestBefore));
 			}
 			
 		} catch(Exception e) {
@@ -182,63 +165,65 @@ public class FoodController {
 			@RequestParam("code") String code,
 			ModelAndView mv) {
 		
-		Optional<Food> fixFoodList = foodRepository.findById(Integer.parseInt(code));
+		Optional<Food> food = foodRepository.findById(Integer.parseInt(code));
 		
-		mv.addObject("food", fixFoodList.get());
+		mv.addObject("food", food.get());
 		mv.setViewName("fix");
 		return mv;
 	}
 	
 	//編集完了ボタン押下
-		@RequestMapping("fix/finalFix")
-		public ModelAndView fixResult(
-				@RequestParam("code") String code,
-				@RequestParam(name="fixName", defaultValue="") String name,
-				@RequestParam(name="fixCategoryCode", defaultValue="") String categoryCode,
-				@RequestParam(name="fixBuyCount", defaultValue="") String buyCount,
-				@RequestParam(name="fixBuyDate", defaultValue="") String buyDateString,
-				@RequestParam(name="fixBestBefore", defaultValue="") String bestBeforeString,
-				ModelAndView mv) {
-			
-			Date buyDate = null;
-			Date bestBefore = null;
-			Food food = null;
-			String stockCount = buyCount;
-			
-			//String→Date型変換
-			if(!(buyDateString.equals(""))) {
-				buyDate = Date.valueOf(buyDateString);
-			} 
-			
-			if(!(bestBeforeString.equals(""))) {
-				bestBefore = Date.valueOf(bestBeforeString);
-			} 
-
+	@RequestMapping("fix/finalFix")
+	public ModelAndView fixResult(
+			@RequestParam("code") String code,
+			@RequestParam(name="fixName") String name,
+			@RequestParam(name="fixCategoryCode", defaultValue="") String categoryCode,
+			@RequestParam(name="fixBuyCount", defaultValue="") String buyCount,
+			@RequestParam(name="buyDate", defaultValue="") String buyDateString,
+			@RequestParam(name="bestBefore", defaultValue="") String bestBeforeString,
+			ModelAndView mv) {
+		
+		Food food = null;
+		String stockCount = buyCount;
+		
+		//入力チェック(食べ物名・個数・購入日)
+		if(name.equals("") || buyCount.equals("") || buyDateString.equals("")) {
+			mv.addObject("message", "入力されていない項目があります。");
+			mv.addObject("name", name);
+			mv.addObject("categoryCode", Integer.parseInt(categoryCode));
+			mv.addObject("buyCount", buyCount);
+			mv.setViewName("add");
+		
+		} else {
+		
 			try {
-				//賞味期限が登録された場合
-				if(bestBefore == null) {
+				//賞味期限が登録されなかった場合
+				if(bestBeforeString.equals("")) {
 					food = new Food
 							(Integer.parseInt(code), Integer.parseInt(categoryCode), name, 
-									Integer.parseInt(stockCount), Integer.parseInt(buyCount), buyDate);
+									Integer.parseInt(stockCount), Integer.parseInt(buyCount), Date.valueOf(buyDateString));
 				
 				//賞味期限が登録されなかった場合
 				} else {
 					food = new Food
 							(Integer.parseInt(code), Integer.parseInt(categoryCode), name,
-									Integer.parseInt(stockCount), Integer.parseInt(buyCount), buyDate, bestBefore);
+									Integer.parseInt(stockCount), Integer.parseInt(buyCount), 
+									Date.valueOf(buyDateString), Date.valueOf(bestBeforeString));
 				}
 				
-				foodRepository.saveAndFlush(food);	
+				foodRepository.saveAndFlush(food);
 				index(mv);
 			
 			//「個数」欄に数字以外が入力された場合
 			} catch(NumberFormatException e) {
+				e.printStackTrace();
 				mv.addObject("message", "「個数」には数字を入力してください。");
-				mv.setViewName("fix");
+				fix(code, mv);
 			}
-	
-			return mv;
 		}
+
+		return mv;
+	}
 	
 	//削除機能
 	@RequestMapping(value="/delete")
@@ -247,8 +232,7 @@ public class FoodController {
 			ModelAndView mv) {
 		
 		foodRepository.deleteById(Integer.parseInt(code));
-		index(mv);
-		return mv;
+		return index(mv);
 	}
 	
 	//履歴表示
@@ -258,5 +242,4 @@ public class FoodController {
 		mv.setViewName("history");
 		return mv;
 	}
-	
 }

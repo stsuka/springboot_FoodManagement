@@ -12,7 +12,7 @@ public interface FoodRepository extends JpaRepository<Food, Integer> {
 	List<Food> findAllByOrderByBuyDateAsc();
 	
 	//カテゴリー別食材一覧表示
-	List<Food> findByCategoryCodeOrderByBuyDateAscStockCountAsc(Integer categoryCode);
+	List<Food> findByCategoryCodeIsAndStockCountGreaterThanOrderByBuyDateAscStockCountAsc(Integer categoryCode, Integer i);
 	
 	//全食材一覧表示
 	List<Food> findAllByStockCountGreaterThanOrderByBuyDateAscStockCountAsc(Integer i);

@@ -15,7 +15,7 @@
 	<br>
 	<br>
 	
-	本日は<span th:text="${today}"></span>です。
+	本日は<span th:text="${#dates.format(today, 'yyyy年MM月dd日')}"></span>です。
 
 	<br>
 	<br>
