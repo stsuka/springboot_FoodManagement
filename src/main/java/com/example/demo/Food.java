@@ -89,6 +89,11 @@ public class Food {
 		this.bestBefore = bestBefore;
 	}
 	
+	//履歴検索
+	public Food(String name) {
+		this.name = name;
+	}
+	
 	//本日(閲覧日)を表示
 	public Date today() {
 		Date today = new Date();

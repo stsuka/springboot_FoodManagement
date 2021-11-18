@@ -3,39 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <title>食べ物管理</title>
+<link th:href="@{/css/food.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
 
 	<h1>食べ物管理</h1>
-	<a href="/">全食材</a>
-	<a th:each="category:${categories}" th:href="'/category/' + ${category.code}">
-		<span th:text="${category.name}" style="padding-left:10px;"></span>
-	</a>
+	
+	<form action="/search" method="get">
+		<select name="categoryCode">
+			<option value="0" th:selected="${categoryCode == 0}">全食材</option>
+			<option value="1" th:selected="${categoryCode == 1}">野菜</option>
+			<option value="2" th:selected="${categoryCode == 2}">肉・魚</option>
+			<option value="3" th:selected="${categoryCode == 3}">お菓子</option>
+			<option value="4" th:selected="${categoryCode == 4}">調味料</option>
+			<option value="5" th:selected="${categoryCode == 5}">飲料水</option>
+			<option value="6" th:selected="${categoryCode == 6}">酒・アルコール飲料</option>
+		</select>の
+		<input type="text" name="word" th:value="${word}" size=10px placeholder="食材名">を
+			<input type="submit" value="表示">
+	</form>
 
-	<br>
 	<br>
 	
-	本日は<span th:text="${#dates.format(today, 'yyyy年MM月dd日')}"></span>です。
-
+	<hr>
 	<br>
+	
+	本日は<span th:text="${#dates.format(today, 'yyyy年MM月dd日')}"></span>です。<br>
+
 	<br>
 	
 	<table border="1">
 		<tr>
 			<th>食べ物</th><th>在庫数</th><th>購入日</th><th>評価</th>
 		</tr>
-		<tr th:each="food,foodStat:${foodList}">
+		<tr th:each="food:${foodList}">
 			<td><a th:href="'/update/' + ${food.code}" th:text="${food.name}"></a></td>
 			<td th:text="${food.stockCount}"></td>
 			<td th:text="${#dates.format(food.buyDate, 'yyyy年MM月dd日')}"></td>
 			<td th:text="${food.judgeBestBefore()}"></td>
 		</tr>
-	
 	</table>
 	
 	<br>
 	
-	<a href="/add">新規登録</a>　｜　<a href="/history">登録履歴</a>
+	<a href="/add">新規登録</a>　｜　<a href="/history/1">登録履歴</a>
+	
+	<ul th:if="${pageNation != null}">
+		<li th:if="${page != 1}">
+			<a th:href="@{/page/{page}(page=${1})}">&lt;&lt;</a>
+		</li>
+		<li th:if="${page != 1}">
+			<a th:href="@{/page/{page}(page=${page-1})}">&lt;</a>
+		</li>
+		<li th:each="i : ${#numbers.sequence(1, pages)}">
+			<th:block th:if="${i == page}">
+				<span th:text="${i}"></span>
+			</th:block>
+			<th:block th:unless="${i == page}">
+				<a th:href="@{/page/{page}(page=${i})}" th:text="${i}"></a>
+			</th:blocks>
+		</li>
+		<li th:if="${page != pages}">
+			<a th:href="@{/page/{page}(page=${page+1})}">&gt;</a>
+		</li>
+		<li th:if="${page != pages}">
+			<a th:href="@{/page/{page}(page=${pages})}">&gt;&gt;</a>
+		</li>
+	</ul>
 
 </body>
 </html>

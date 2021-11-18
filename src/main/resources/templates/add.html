@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>食材追加</title>
+<link th:href="@{/css/food.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
 
@@ -23,9 +24,12 @@
 				<th><span style="color:red">*</span>カテゴリー</th>
 				<td>
 					<select name="categoryCode">
-						<option value="1" th:selected="${categoryCode == 1}">1.野菜</option>
-						<option value="2" th:selected="${categoryCode == 2}">2.肉・魚</option>
-						<option value="3" th:selected="${categoryCode == 3}">3.お菓子</option>
+						<option value="1" th:selected="${categoryCode == 1}">野菜</option>
+						<option value="2" th:selected="${categoryCode == 2}">肉・魚</option>
+						<option value="3" th:selected="${categoryCode == 3}">お菓子</option>
+						<option value="4" th:selected="${categoryCode == 4}">調味料</option>
+						<option value="5" th:selected="${categoryCode == 5}">飲料水</option>
+						<option value="6" th:selected="${categoryCode == 6}">酒・アルコール飲料</option>
 					</select>
 				</td>
 			</tr>

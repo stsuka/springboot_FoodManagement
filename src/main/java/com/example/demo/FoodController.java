@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,40 +27,62 @@ public class FoodController {
 	@RequestMapping("/")
 	public ModelAndView index(ModelAndView mv) {
 		
-		Food food = new Food();
+		java.util.Date today = new java.util.Date();
 		
-		mv.addObject("today", food.today());
+		mv.addObject("today", today);
 		mv.addObject("categories", foodCategoryRepository.findAll());
-		mv.addObject("foodList",
-				foodRepository.findAllByStockCountGreaterThanOrderByBuyDateAscStockCountAsc(0));
+		getItems(mv, 1);
 		mv.setViewName("home");
 		return mv;
 		
 	}
 	
-	//カテゴリーリンク押下
-	@RequestMapping("/category/{code}")
-	public ModelAndView foodByCode(
-			@PathVariable(name="code") int categoryCode,
+	//検索機能
+	@RequestMapping(value="/search", method=RequestMethod.GET)
+	public ModelAndView search(
+			@RequestParam(name="word", defaultValue="") String word,
+			@RequestParam(name="categoryCode", defaultValue="") String categoryCode,
 			ModelAndView mv) {
+
+		java.util.Date today = new java.util.Date();
 		
-		Food food = new Food();
+		//検索ボタン押下時、ワード指定がなかった場合
+		if(word.equals("")) {
+			if(categoryCode.equals("0")) {
+				index(mv);
+			} else {
+				mv.addObject("foodList",
+						foodRepository.findByCategoryCodeIsAndStockCountGreaterThanOrderByBuyDateAscStockCountAsc
+						(Integer.parseInt(categoryCode), 0));
+			}
 		
-		mv.addObject("today", food.today());
-		mv.addObject("foodList",
-				foodRepository.findByCategoryCodeIsAndStockCountGreaterThanOrderByBuyDateAscStockCountAsc(categoryCode, 0));
+		//検索ボタン押下時、ワード指定があった場合
+		} else {
+			if(categoryCode.equals("0")) {
+				mv.addObject("foodList",
+					foodRepository.findByNameContainingAndStockCountGreaterThanOrderByBuyDateAscStockCountAsc(word, 0));
+			} else {
+				mv.addObject("foodList",
+					foodRepository.findByCategoryCodeIsAndNameContainingAndStockCountGreaterThanOrderByBuyDateAscStockCountAsc
+					(Integer.parseInt(categoryCode), word, 0));
+			}
+		}
+		
+		mv.addObject("today", today);
 		mv.addObject("categories", foodCategoryRepository.findAll());
+		mv.addObject("word", word);
+		mv.addObject("categoryCode", Integer.parseInt(categoryCode));
 		mv.setViewName("home");
 		return mv;
 	}
 	
-	//登録リンク押下
+	//新規登録リンク押下
 	@RequestMapping("/add")
 	public String add() {
 		return "add";
 	}
 	
-	//登録ボタン押下
+	//新規登録ページで登録ボタン押下
 	@RequestMapping("/add/addResult")
 	public ModelAndView addResult(
 			@RequestParam(name="name", defaultValue="") String name,
@@ -68,7 +92,6 @@ public class FoodController {
 			@RequestParam(name="bestBefore", defaultValue="") String bestBeforeString,
 			ModelAndView mv) {
 		
-		Food food = null;
 		String stockCount = buyCount;
 		
 		//入力チェック(食べ物名・個数・購入日)
@@ -81,8 +104,11 @@ public class FoodController {
 		
 		} else {
 			try {
+				
+				Food food = null;
+				
 				//賞味期限が登録されなかった場合
-				if(buyDateString.equals("")) {
+				if(bestBeforeString.equals("")) {
 					food = new Food
 							(Integer.parseInt(categoryCode), name, Integer.parseInt(stockCount),
 									Integer.parseInt(buyCount), Date.valueOf(buyDateString));
@@ -114,13 +140,13 @@ public class FoodController {
 		@PathVariable(name="code") String code,
 		ModelAndView mv) {
 		
-		Optional<Food> updateFoodList = foodRepository.findById(Integer.parseInt(code));
-		mv.addObject("food", updateFoodList.get());
+		Optional<Food> food = foodRepository.findById(Integer.parseInt(code));
+		mv.addObject("food", food.get());
 		mv.setViewName("update");
 		return mv;
 	}
 	
-	//「在庫管理」の変更ボタンを押下したとき
+	//在庫管理ページの変更ボタンを押下したとき
 	@RequestMapping(value="/update/finalUpdate", method=RequestMethod.POST)
 	public ModelAndView finalupdate(
 			@RequestParam("code") String code,
@@ -131,10 +157,9 @@ public class FoodController {
 			@RequestParam("buyDate") String buyDate,
 			@RequestParam(name="bestBefore", defaultValue="") String bestBefore,
 			ModelAndView mv) {
-		
-		Food food = null;
-		
+			
 		try {
+			Food food = null;
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			
 			//賞味期限が登録されている場合
@@ -151,15 +176,16 @@ public class FoodController {
 							format.parse(buyDate), format.parse(bestBefore));
 			}
 			
+			foodRepository.saveAndFlush(food);
+		
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-		foodRepository.saveAndFlush(food);
 		return index(mv);
 	}
 	
-	//「登録情報の編集」の編集ボタンを押下したとき
+	//在庫管理ページの編集ボタンを押下したとき
 	@RequestMapping("/fix")
 	public ModelAndView fix(
 			@RequestParam("code") String code,
@@ -172,7 +198,7 @@ public class FoodController {
 		return mv;
 	}
 	
-	//編集完了ボタン押下
+	//登録情報の編集ページの編集完了ボタン押下
 	@RequestMapping("fix/finalFix")
 	public ModelAndView fixResult(
 			@RequestParam("code") String code,
@@ -182,10 +208,7 @@ public class FoodController {
 			@RequestParam(name="buyDate", defaultValue="") String buyDateString,
 			@RequestParam(name="bestBefore", defaultValue="") String bestBeforeString,
 			ModelAndView mv) {
-		
-		Food food = null;
-		String stockCount = buyCount;
-		
+
 		//入力チェック(食べ物名・個数・購入日)
 		if(name.equals("") || buyCount.equals("") || buyDateString.equals("")) {
 			mv.addObject("message", "入力されていない項目があります。");
@@ -195,8 +218,10 @@ public class FoodController {
 			mv.setViewName("add");
 		
 		} else {
-		
 			try {
+				String stockCount = buyCount;
+				Food food = null;
+				
 				//賞味期限が登録されなかった場合
 				if(bestBeforeString.equals("")) {
 					food = new Food
@@ -221,7 +246,6 @@ public class FoodController {
 				fix(code, mv);
 			}
 		}
-
 		return mv;
 	}
 	
@@ -236,10 +260,80 @@ public class FoodController {
 	}
 	
 	//履歴表示
-	@RequestMapping("history")
-	public ModelAndView history(ModelAndView mv) {
-		mv.addObject("foodList", foodRepository.findAllByOrderByBuyDateAsc());
+	@RequestMapping("/history/{page}")
+	public ModelAndView historyPageNation(
+			@PathVariable(name="page") int page,
+			ModelAndView mv) {
+		
+		Pageable limit = PageRequest.of(page - 1, 15);
+		long count = foodRepository.count();
+		long pages = count / 15;  //答え
+		long rem = count % 15;    //あまり
+		
+		mv.addObject("pages", (rem == 0) ? pages : pages + 1);
+		mv.addObject("page", page);
+		mv.addObject("foodList", foodRepository.findAllByOrderByBuyDateAsc(limit));
+		mv.addObject("pageNation", "pageNation");
 		mv.setViewName("history");
+		return mv;
+	}
+	
+	//検索機能
+	@RequestMapping(value="/history/search", method=RequestMethod.GET)
+	public ModelAndView historySearch(
+			@RequestParam(name="word", defaultValue="") String word,
+			@RequestParam(name="categoryCode", defaultValue="") String categoryCode,
+			ModelAndView mv) {
+		
+		//検索ボタン押下時、ワード指定がなかった場合
+		if(word.equals("")) {
+			if(categoryCode.equals("0")) {
+				historyPageNation(1, mv);
+			} else {
+				mv.addObject("foodList",
+						foodRepository.findByCategoryCodeIsOrderByBuyDateAscStockCountAsc
+						(Integer.parseInt(categoryCode)));
+			}
+		
+		//検索ボタン押下時、ワード指定があった場合
+		} else {
+			if(categoryCode.equals("0")) {
+				mv.addObject("foodList",
+					foodRepository.findByNameContainingOrderByBuyDateAscStockCountAsc(word));
+			} else {
+				mv.addObject("foodList",
+					foodRepository.findByCategoryCodeIsAndNameContainingOrderByBuyDateAscStockCountAsc
+					(Integer.parseInt(categoryCode), word));
+			}
+		}
+		
+		mv.addObject("categories", foodCategoryRepository.findAll());
+		mv.addObject("word", word);
+		mv.addObject("categoryCode", Integer.parseInt(categoryCode));
+		mv.setViewName("history");
+		return mv;
+	}
+	
+	//ページネーション(全食材一覧表示)
+	@RequestMapping("/page/{page}")
+	public ModelAndView items(ModelAndView mv,
+			@PathVariable(name="page") int page) {
+		return getItems(mv, page);
+	}
+	
+	private ModelAndView getItems(ModelAndView mv, int page) {
+		java.util.Date today = new java.util.Date();
+		Pageable limit = PageRequest.of(page - 1, 10);
+		long count = foodRepository.count();
+		long pages = count / 10;  //答え
+		long rem = count % 10;    //あまり
+		
+		mv.addObject("today", today);
+		mv.addObject("pages", (rem == 0) ? pages : pages + 1);
+		mv.addObject("page", page);
+		mv.addObject("foodList", foodRepository.findAllByStockCountGreaterThanOrderByBuyDateAscStockCountAsc(0, limit));
+		mv.addObject("pageNation", "pageNation");
+		mv.setViewName("home");
 		return mv;
 	}
 }

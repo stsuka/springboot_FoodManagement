@@ -3,13 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <title>登録履歴</title>
+<link th:href="@{/css/food.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
 
 	<h1>登録履歴</h1>
-	最終更新時の情報です。
+	購入時の情報です。
+	<form action="/history/search" method="get">
+		<select name="categoryCode">
+			<option value="0" th:selected="${categoryCode == 0}">全食材</option>
+			<option value="1" th:selected="${categoryCode == 1}">野菜</option>
+			<option value="2" th:selected="${categoryCode == 2}">肉・魚</option>
+			<option value="3" th:selected="${categoryCode == 3}">お菓子</option>
+			<option value="4" th:selected="${categoryCode == 4}">調味料</option>
+			<option value="5" th:selected="${categoryCode == 5}">飲料水</option>
+			<option value="6" th:selected="${categoryCode == 6}">酒・アルコール飲料</option>
+		</select>の
+		<input type="text" name="word" th:value="${word}" size=10px placeholder="食材名">を
+			<input type="submit" value="表示">
+	</form>
 	
-	<br>
+	<hr>
 	<br>
 	
 	<table border="1">
@@ -29,7 +43,32 @@
 		</tr>
 	</table>
 	
-	<br>
+	<ul th:if="${pageNation != null}">
+		<li th:if="${page != 1}">
+			<a th:href="@{/history/{page}(page=${1})}">&lt;&lt;</a>
+		</li>
+		<li th:if="${page != 1}">
+			<a th:href="@{/history/{page}(page=${page-1})}">&lt;</a>
+		</li>
+		<li th:each="i : ${#numbers.sequence(1, pages)}">
+			<th:block th:if="${i == page}">
+				<span th:text="${i}"></span>
+			</th:block>
+			<th:block th:unless="${i == page}">
+				<a th:href="@{/history/{page}(page=${i})}" th:text="${i}"></a>
+			</th:blocks>
+		</li>
+		<li th:if="${page != pages}">
+			<a th:href="@{/history/{page}(page=${page+1})}">&gt;</a>
+		</li>
+		<li th:if="${page != pages}">
+			<a th:href="@{/history/{page}(page=${pages})}">&gt;&gt;</a>
+		</li>
+	</ul>
+	
+	<th:block th:if="${pageNation == null}">
+		<br><a href="/history/1">履歴一覧</a> | 
+	</th:block>
 	
 	<a href="/">戻る</a>
 	

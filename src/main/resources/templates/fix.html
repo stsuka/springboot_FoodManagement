@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>登録情報の編集</title>
+<link th:href="@{/css/food.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
 
@@ -19,9 +20,12 @@
 				<th>カテゴリー</th>
 				<td>
 					<select name="fixCategoryCode">
-						<option value="1" th:selected="${food.categoryCode == 1}">1.野菜</option>
-						<option value="2" th:selected="${food.categoryCode == 2}">2.肉・魚</option>
-						<option value="3" th:selected="${food.categoryCode == 3}">3.お菓子</option>
+						<option value="1" th:selected="${food.categoryCode == 1}">野菜</option>
+						<option value="2" th:selected="${food.categoryCode == 2}">肉・魚</option>
+						<option value="3" th:selected="${food.categoryCode == 3}">お菓子</option>
+						<option value="4" th:selected="${food.categoryCode == 4}">調味料</option>
+						<option value="5" th:selected="${food.categoryCode == 5}">飲料水</option>
+						<option value="6" th:selected="${food.categoryCode == 6}">酒・アルコール飲料</option>
 					</select>
 				</td>
 			</tr>	
