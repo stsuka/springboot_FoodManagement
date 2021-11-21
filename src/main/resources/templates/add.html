@@ -8,54 +8,62 @@
 <body>
 
 	<h1>食材を追加します</h1>
+	<div class="left">
+		下記入力欄を埋めたうえで「追加」ボタンを押してください。<br>
+		<span class="colorBlue">*</span>は入力必須項目です。
+		
+		<p th:text="${message}" class="colorRed"></p>
+	</div>
+	<div class="left">
+		<form action="/add/addResult" method="post">
+			<table>
+				<tr>
+					<th class="addTable"><span class="colorBlue">*</span>食べ物</th>
+					<td>
+						<input class="width" type="text" name="name" th:value="${name}">
+					</td>
+				</tr>
+				<tr>
+					<th class="addTable"><span class="colorBlue">*</span>カテゴリー</th>
+					<td>
+						<select name="categoryCode">
+							<option value="1" th:selected="${categoryCode == 1}">野菜</option>
+							<option value="2" th:selected="${categoryCode == 2}">肉・魚</option>
+							<option value="3" th:selected="${categoryCode == 3}">お菓子</option>
+							<option value="4" th:selected="${categoryCode == 4}">調味料</option>
+							<option value="5" th:selected="${categoryCode == 5}">飲料水</option>
+							<option value="6" th:selected="${categoryCode == 6}">酒・アルコール飲料</option>
+							<option value="7" th:selected="${categoryCode == 7}">お惣菜</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th class="addTable"><span class="colorBlue">*</span>購入個数</th>
+					<td>
+						<input class="width" type="text" name="buyCount" th:value="${buyCount}">
+					</td>
+				</tr>
+				<tr>
+					<th class="addTable"><span class="colorBlue">*</span>購入日</th>
+					<td><input type="date" name="buyDate"></td>
+				</tr>
+				<tr>
+					<th class="addTable">賞味期限</th>
+					<td><input type="date" name="bestBefore"></td>
+				</tr>
+			</table>
+			
+			<br>
+			
+			<input type="submit" value="追加" class="button addButton">
+		</form>
+	</div>
+	
 	<br>
-	下記入力欄を埋めたうえで「追加」ボタンを押してください。<br>
-	<span style="color:red">*</span>は入力必須項目です。
+	<hr>
 	
-	<p th:text="${message}" style="color:red"></p>
-	
-	<form action="/add/addResult" method="post">
-		<table border="1">
-			<tr>
-				<th><span style="color:red">*</span>食べ物</th>
-				<td><input type="text" name="name" th:value="${name}"></td>
-			</tr>
-			<tr>
-				<th><span style="color:red">*</span>カテゴリー</th>
-				<td>
-					<select name="categoryCode">
-						<option value="1" th:selected="${categoryCode == 1}">野菜</option>
-						<option value="2" th:selected="${categoryCode == 2}">肉・魚</option>
-						<option value="3" th:selected="${categoryCode == 3}">お菓子</option>
-						<option value="4" th:selected="${categoryCode == 4}">調味料</option>
-						<option value="5" th:selected="${categoryCode == 5}">飲料水</option>
-						<option value="6" th:selected="${categoryCode == 6}">酒・アルコール飲料</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<th><span style="color:red">*</span>購入個数</th>
-				<td><input type="text" name="buyCount" th:value="${buyCount}"></td>
-			</tr>
-			<tr>
-				<th><span style="color:red">*</span>購入日</th>
-				<td><input type="date" name="buyDate"></td>
-			</tr>
-			<tr>
-				<th>賞味期限</th>
-				<td><input type="date" name="bestBefore"></td>
-			</tr>
-		</table>
-		
-		<br>
-		
-		<input type="submit" value="追加">
-		
-		<br>
-		<br>
-		
-		<a href="/">戻る</a>
-	
-	</form>
+	<div class="left">
+		<a class="button" href="/">戻る</a>
+	</div>
 </body>
 </html>

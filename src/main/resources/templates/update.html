@@ -3,55 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <title>在庫管理</title>
+<link th:href="@{/css/food.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
 
 	<h1>在庫管理</h1>
-	食べ物名：<span th:text="${food.name}"></span><br>
-	購入日：<span th:text="${#dates.format(food.buyDate, 'yyyy年MM月dd日')}"></span><br>
+	<div class="left">食べ物名：<span th:text="${food.name}"></span><br>
+		購入日：<span th:text="${#dates.format(food.buyDate, 'yyyy年MM月dd日')}"></span><br>
 	
 		<th:block th:if="${food.bestBefore != null}">
 			賞味期限：<span th:text="${#dates.format(food.bestBefore, 'yyyy年MM月dd日')}"></span><br>
 			評価：<span th:text="${food.judgeBestBefore()}"></span><br>
 		</th:block>
 		<th:block th:if="${food.bestBefore == null}">
-			賞味期限：<span th:text="賞味期限が設定されていません。" style="color:red"></span><br>
-			評価：<span th:text="${food.judgeBuyDate()}"></span><br>
+			賞味期限：<span class="colorRed" th:text="賞味期限が設定されていません。"></span><br>
+			評価：<span class="colorRed" th:text="${food.judgeBuyDate()}"></span><br>
 		</th:block>
+	</div>
 
 	<br>
 	
-	<b style="color:red">使用した分減らす</b>
-	<form action="/update/finalUpdate" method="post" onsubmit="return confirm('変更しますか？')">
-		登録していた在庫を<b style="color:red" th:text="${food.stockCount}"></b>個から
-		<select name="stockCount">
-			<option th:each="i:${#numbers.sequence(food.stockCount, 0)}" th:text="${i}" th:value="${i}"></option>
-		</select>個に変更します。
-	
-		<br>
-	
-		<input type="submit" value="変更">
-		<input type="hidden" name="code" th:value="${food.code}">
-		<input type="hidden" name="categoryCode" th:value="${food.categoryCode}">
-		<input type="hidden" name="name" th:value="${food.name}">
-		<input type="hidden" name="buyCount" th:value="${food.buyCount}">
-		<input type="hidden" name="buyDate" th:value="${food.buyDate}">
-		<input type="hidden" name="bestBefore" th:value="${food.bestBefore}">
-	
-	</form>
+	<div class="left">
+		<b class="colorRed">使用した分減らす</b>
+		<form action="/update/finalUpdate" method="post" onsubmit="return confirm('在庫数を変更しますか？')">
+			登録していた在庫を<b class="colorRed" th:text="${food.stockCount}"></b>個から
+			<select name="stockCount">
+				<option th:each="i:${#numbers.sequence(food.stockCount, 0)}" th:text="${i}" th:value="${i}"></option>
+			</select>個に<input type="submit" value="変更" class="button reduceButton">します。
+		
+			<br>
+		
+			<input type="hidden" name="code" th:value="${food.code}">
+			<input type="hidden" name="categoryCode" th:value="${food.categoryCode}">
+			<input type="hidden" name="name" th:value="${food.name}">
+			<input type="hidden" name="buyCount" th:value="${food.buyCount}">
+			<input type="hidden" name="buyDate" th:value="${food.buyDate}">
+			<input type="hidden" name="bestBefore" th:value="${food.bestBefore}">
+		
+		</form>
+	</div>
 	
 	<hr>
 	
 	<h1>登録情報の変更・削除</h1>
-	<form action="/fix">
-		<b style="color:red">登録情報の変更・削除</b>はこちら：
-		<input type="submit" value="編集">
-		<input type="hidden" name="code" th:value="${food.code}">
-	</form>
+	<div class="left">
+		<form action="/fix">
+			<b class="colorRed">登録情報の変更・削除</b>はこちら：
+			<input type="submit" value="編集" class="button fixButton">
+			<input type="hidden" name="code" th:value="${food.code}">
+		</form>
+	</div>
 	
 	<br>
+	<hr>
 	
-	<a href="/">戻る</a>
+	<div class="left">
+		<a class="button" href="/">戻る</a>
+	</div>
 	
 </body>
 </html>

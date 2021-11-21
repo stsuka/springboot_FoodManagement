@@ -7,41 +7,51 @@
 </head>
 <body>
 
-	<h1>登録履歴</h1>
-	購入時の情報です。
-	<form action="/history/search" method="get">
-		<select name="categoryCode">
-			<option value="0" th:selected="${categoryCode == 0}">全食材</option>
-			<option value="1" th:selected="${categoryCode == 1}">野菜</option>
-			<option value="2" th:selected="${categoryCode == 2}">肉・魚</option>
-			<option value="3" th:selected="${categoryCode == 3}">お菓子</option>
-			<option value="4" th:selected="${categoryCode == 4}">調味料</option>
-			<option value="5" th:selected="${categoryCode == 5}">飲料水</option>
-			<option value="6" th:selected="${categoryCode == 6}">酒・アルコール飲料</option>
-		</select>の
-		<input type="text" name="word" th:value="${word}" size=10px placeholder="食材名">を
-			<input type="submit" value="表示">
-	</form>
-	
+	<div class="left">
+		<h1>登録履歴</h1>
+		購入時に登録された情報です。
+		<form action="/history/search" method="get">
+			<select name="categoryCode">
+				<option value="0" th:selected="${categoryCode == 0}">全食材</option>
+				<option value="1" th:selected="${categoryCode == 1}">野菜</option>
+				<option value="2" th:selected="${categoryCode == 2}">肉・魚</option>
+				<option value="3" th:selected="${categoryCode == 3}">お菓子</option>
+				<option value="4" th:selected="${categoryCode == 4}">調味料</option>
+				<option value="5" th:selected="${categoryCode == 5}">飲料水</option>
+				<option value="6" th:selected="${categoryCode == 6}">酒・アルコール飲料</option>
+			</select>の
+			<input type="text" name="word" th:value="${word}" size=10px placeholder="食材名">を
+			<input type="submit" value="表示" class="button">
+		</form>
+		
+	</div>
 	<hr>
 	<br>
 	
-	<table border="1">
-		<tr>
-			<th>食べ物</th><th>購入数</th><th>購入日</th><th>賞味期限</th>
-		</tr>
-		<tr th:each="food:${foodList}">
-			<td th:text="${food.name}"></td>
-			<td th:text="${food.buyCount}"></td>
-			<td th:text="${#dates.format(food.buyDate, 'yyyy年MM月dd日')}"></td>
-			<th:block th:if="${food.bestBefore == null}">
-				<td>賞味期限の登録はありません</td>
-			</th:block>
-			<th:block th:if="${food.bestBefore != null}">
-				<td th:text="${#dates.format(food.bestBefore, 'yyyy年MM月dd日')}"></td>
-			</th:block>
-		</tr>
-	</table>
+	<div class="left">
+		<table>
+			<tr>
+				<th>食べ物</th><th>購入数</th><th>購入日</th><th>賞味期限</th>
+			</tr>
+			<tr th:each="food:${foodList}">
+				<td><div class="tdLeft" th:text="${food.name}"></div></td>
+				<td th:text="${food.buyCount}"></td>
+				<td th:text="${#dates.format(food.buyDate, 'yyyy年MM月dd日')}"></td>
+				<th:block th:if="${food.bestBefore == null}">
+					<td>賞味期限の登録はありません</td>
+				</th:block>
+				<th:block th:if="${food.bestBefore != null}">
+					<td th:text="${#dates.format(food.bestBefore, 'yyyy年MM月dd日')}"></td>
+				</th:block>
+			</tr>
+		</table>
+	</div>
+	
+	<div class="left">
+		<th:block th:if="${pageNation == null}">
+			<br><a class="button" href="/history/1">履歴一覧</a> | <a class="button" href="/">トップページに戻る</a>
+		</th:block>
+	</div>
 	
 	<ul th:if="${pageNation != null}">
 		<li th:if="${page != 1}">
@@ -66,11 +76,11 @@
 		</li>
 	</ul>
 	
-	<th:block th:if="${pageNation == null}">
-		<br><a href="/history/1">履歴一覧</a> | 
+	<th:block th:if="${pageNation != null}">
+		<div class="left">
+			<a class="button" href="/">トップページに戻る</a>
+		</div>
 	</th:block>
-	
-	<a href="/">戻る</a>
 	
 </body>
 </html>

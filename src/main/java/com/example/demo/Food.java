@@ -143,12 +143,11 @@ public class Food {
 	    TimeUnit time = TimeUnit.DAYS;
 	    long diffDate = time.convert(diff, TimeUnit.MILLISECONDS);
 		
-	    judgeBuyDate = "購入してから" + diffDate + "日経過しています。";
-	    if(5 < diffDate && diffDate <= 10) {
-	    	judgeBuyDate += "早急に消費してください。";
-	    
-	    } else if(10 < diffDate) {
-	    	judgeBuyDate += "生鮮食品の場合、廃棄も検討してください。";
+	    if(diffDate <= 7) {
+	    	judgeBuyDate = "購入してから" + diffDate + "日経過しています。";
+	    	
+	    } else if(7 < diffDate) {
+	    	judgeBuyDate = "購入後、１週間以上経過しています。生鮮食品の場合、廃棄も検討してください。";
 	    }
 	    
 		return judgeBuyDate;

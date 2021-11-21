@@ -8,16 +8,18 @@
 <body>
 
 	<h1>登録情報の編集</h1>
-	<p th:text="${message}" style="color:red"></p>
+	<p th:text="${message}" class="colorRed"></p>
 	
-	<form action="fix/finalFix" method="post" onsubmit="return confirm('変更しますか？')">
+	<form action="fix/finalFix" method="post" onsubmit="return confirm('編集を完了しますか？')">
 		<table border="1">
 			<tr>
-				<th>食べ物</th>
-				<td><input type="text" name="fixName" th:value="${food.name}"></td>
+				<th class="fixTable">食べ物</th>
+				<td>
+					<input class="width" type="text" name="fixName" th:value="${food.name}">
+				</td>
 			</tr>
 			<tr>
-				<th>カテゴリー</th>
+				<th class="fixTable">カテゴリー</th>
 				<td>
 					<select name="fixCategoryCode">
 						<option value="1" th:selected="${food.categoryCode == 1}">野菜</option>
@@ -26,43 +28,43 @@
 						<option value="4" th:selected="${food.categoryCode == 4}">調味料</option>
 						<option value="5" th:selected="${food.categoryCode == 5}">飲料水</option>
 						<option value="6" th:selected="${food.categoryCode == 6}">酒・アルコール飲料</option>
+						<option value="7" th:selected="${food.categoryCode == 7}">お惣菜</option>
 					</select>
 				</td>
 			</tr>	
 			<tr>
-				<th>購入数</th>
-				<td><input type="text" name="fixBuyCount" th:value="${food.buyCount}"></td>
-			</tr>	
-			
-			
-						
+				<th class="fixTable">購入数</th>
+				<td>
+					<input class="width" type="text" name="fixBuyCount" th:value="${food.buyCount}">
+				</td>
+			</tr>			
 			<tr>
-				<th>購入日</th>
+				<th class="fixTable">購入日</th>
 				<td><input type="date" th:field="${food.buyDate}"></td>
 			</tr>		
 			<tr>
-				<th>賞味期限</th>
+				<th class="fixTable">賞味期限</th>
 				<td><input type="date" th:field="${food.bestBefore}"></td>
 			</tr>		
 		</table>
 
 		<br>
-		<b style="color:red">編集が完了した</b>：
-			<input type="submit" value="編集完了">
+		<b class="colorRed">編集完了後はこちらをクリック:</b>
+			<input type="submit" value="編集完了" class="button fixButton">
 			<input type="hidden" name="code" th:value="${food.code}">
 	</form>
 	
-	<hr>
 	<br>
 	
-	<form action="/delete" onsubmit="return confirm('削除しますか？')">
-		<b style="color:red">入力・登録に誤りがあった場合：</b><input type="submit" value="削除">
+	<form action="/delete" onsubmit="return confirm('削除しますか？(削除後データの復元はできません)')">
+		<b class="colorRed">入力・登録に誤りがあった場合：</b><input type="submit" value="削除" class="button deleteButton">
 		<input type="hidden" name="code" th:value="${food.code}">
 	</form>
 	
 	<br>
+	<hr>
 	
-	<a href="/">トップページに戻る</a>
+	<a class="button" href="/">トップページに戻る</a>
 
 </body>
 </html>

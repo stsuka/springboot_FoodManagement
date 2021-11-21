@@ -33,8 +33,7 @@ public class FoodController {
 		mv.addObject("categories", foodCategoryRepository.findAll());
 		getItems(mv, 1);
 		mv.setViewName("home");
-		return mv;
-		
+		return mv;	
 	}
 	
 	//検索機能
@@ -104,7 +103,6 @@ public class FoodController {
 		
 		} else {
 			try {
-				
 				Food food = null;
 				
 				//賞味期限が登録されなかった場合
@@ -162,13 +160,13 @@ public class FoodController {
 			Food food = null;
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			
-			//賞味期限が登録されている場合
+			//賞味期限が登録されていない場合
 			if(bestBefore.equals("")) {
 				food = new Food
 						(Integer.parseInt(code), Integer.parseInt(categoryCode),
 							name,Integer.parseInt(stockCount), Integer.parseInt(buyCount), format.parse(buyDate));
 			
-			//賞味期限が登録されていない場合
+			//賞味期限が登録されている場合
 			} else {
 				food = new Food
 						(Integer.parseInt(code), Integer.parseInt(categoryCode), name,
@@ -265,10 +263,10 @@ public class FoodController {
 			@PathVariable(name="page") int page,
 			ModelAndView mv) {
 		
-		Pageable limit = PageRequest.of(page - 1, 15);
+		Pageable limit = PageRequest.of(page - 1, 10);
 		long count = foodRepository.count();
-		long pages = count / 15;  //答え
-		long rem = count % 15;    //あまり
+		long pages = count / 10;  //答え
+		long rem = count % 10;    //あまり
 		
 		mv.addObject("pages", (rem == 0) ? pages : pages + 1);
 		mv.addObject("page", page);
@@ -278,7 +276,7 @@ public class FoodController {
 		return mv;
 	}
 	
-	//検索機能
+	//履歴検索機能
 	@RequestMapping(value="/history/search", method=RequestMethod.GET)
 	public ModelAndView historySearch(
 			@RequestParam(name="word", defaultValue="") String word,

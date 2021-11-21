@@ -1,5 +1,133 @@
 @charset "UTF-8";
 
+body{
+	background-color:#FFFFCC;
+	width:800px;
+	margin:0 auto;
+}
+
+h1{
+	text-align:center;
+}
+
+/*左寄せ*/
+.left{
+	position: relative;
+	padding-left:20px;
+}
+
+/*入力欄・選択肢の拡大*/
+input{
+	font-size: 100%;
+}
+select{
+	font-size: 100%;
+}
+
+/* ページング処理のリンクを横ぞろえ */
 li{
 	display:inline;
+}
+
+/*履歴表示の食べ物名左寄せ*/
+div.tdLeft{
+	float:left
+}
+
+/*文字色変更*/
+.colorRed{
+	color:red;
+	font-weight:bold;
+}
+.colorBlue{
+	color:blue;
+}
+
+table {
+	border-collapse: collapse; /* 隣接するセルの罫線を重ねて表示する */
+	color: #000000; /* フォントの色を指定する */
+}
+td, th {
+	border: 1px solid #000000; /* 境界線を実線で指定する */
+	background-color:white;/* 背景色を指定する */
+	text-align: center; /* インライン要素の位置を指定する */
+	padding: 6px 12px; /* 要素の余白を指定する(上下左右) */
+}
+th {
+	color: #fff; /* 見出しのフォントの色を指定する */
+	background-color: #31A9EE; /* 見出しの背景色を指定する */
+}
+th.addTable {
+	color: #fff; /* 見出しのフォントの色を指定する */
+	background-color: #ff7f7f; /* 見出しの背景色を指定する */
+}
+th.fixTable {
+	color: #fff; /* 見出しのフォントの色を指定する */
+	background-color: #7f007f; /* 見出しの背景色を指定する */
+}
+
+a{
+	text-decoration: none;
+ 	transition: color 0.3s;
+}
+a:hover{
+	color : #ff7043;
+}
+
+a:active{
+	color : #ff7043;
+}
+/*トップページの食べ物名左寄せ*/
+a.tdLeft{
+	float:left;
+}
+
+.button {
+	display       : inline-block;
+	border-radius : 11px;          /* 角丸       */
+	font-size     : 12pt;        /* 文字サイズ */
+	text-align    : center;      /* 文字位置   */
+	cursor        : pointer;     /* カーソル   */
+	padding       : 6px 10px;   /* 余白       */
+	background    : #88aadd;     /* 背景色     */
+	color         : #ffffff;     /* 文字色     */
+	line-height   : 1em;         /* 1行の高さ  */
+	transition    : .3s;         /* なめらか変化 */
+	border        : 1px solid;    /* 枠の指定 */
+}
+.button:hover {
+	color         : #88aadd;     /* 背景色     */
+	background    : #ffffff;     /* 文字色     */
+}
+.addButton{
+ 	background    : #ff7f7f;     /* 背景色     */
+	color         : #ffffff;     /* 文字色     */
+}
+.addButton:hover {
+	color         : #ff7f7f;     /* 背景色     */
+	background    : #ffffff;     /* 文字色     */
+}
+.reduceButton{
+	background    : #003300;     /* 背景色     */
+	color         : #ffffff;     /* 文字色     */
+}
+.reduceButton:hover {
+	color         : #003300;     /* 背景色     */
+	background    : #ffffff;     /* 文字色     */
+}
+.fixButton{
+	background    : #7f007f;     /* 背景色     */
+	color         : #ffffff;     /* 文字色     */
+}
+.fixButton:hover {
+	color         : #7f007f;     /* 背景色     */
+	background    : #ffffff;     /* 文字色     */
+}
+.deleteButton{
+	background    : #000000;     /* 背景色     */
+	color         : #ffff1a;     /* 文字色     */
+}
+.deleteButton:hover {
+	color         : #000000;     /* 背景色     */
+ 	background    : #ffff1a;     /* 文字色     */
 }
